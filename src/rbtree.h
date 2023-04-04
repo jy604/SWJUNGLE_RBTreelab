@@ -3,18 +3,18 @@
 
 #include <stddef.h>
 
-typedef enum { RBTREE_RED, RBTREE_BLACK } color_t;
+typedef enum { RBTREE_RED, RBTREE_BLACK } color_t; //색 지정 red or black
 
-typedef int key_t;
+typedef int key_t; 
 
 typedef struct node_t {
-  color_t color;
-  key_t key;
-  struct node_t *parent, *left, *right;
+  color_t color; //노드 색
+  key_t key; //노드 값
+  struct node_t *parent, *left, *right; //노드 부모, 왼쪽 자식, 오른쪽 자식
 } node_t;
 
 typedef struct {
-  node_t *root;
+  node_t *root; //루트 노드
   node_t *nil;  // for sentinel
 } rbtree;
 
