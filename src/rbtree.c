@@ -225,10 +225,10 @@ void rbtree_erase_fixup(rbtree *t, node_t *x){
     // !!!!기준이 되는 노드가 왼쪽일 떄!!!! 오른쪽은 else문으로 방향 바꿔 처리
     //case 1 : 이중흑색노드의 형제가 red인 경우 - 형제를 black, 부모를 red로 칠하고 부모 기준 좌회전
     if (x == x -> parent -> left) {
-      w = x -> parent -> right; //w는 x의 오른쪽 형제 노드임
+      w = x -> parent -> right; // w는 x의 오른쪽 형제 노드임
       if (w -> color == RBTREE_RED) { // 그 오른쪽 형제가 red이면
         w -> color = RBTREE_BLACK; // 오른쪽 형제 노드의 색을 black으로 바꿈
-        x -> parent -> color = RBTREE_RED; //x의 부모의 색을 red로 바꿈
+        x -> parent -> color = RBTREE_RED; // x의 부모의 색을 red로 바꿈
         left_rotation(t, x->parent); // x의 부모를 기준으로 좌회전
         w = x -> parent -> right; // case 1 end
       } // case 1을 해결할 경우, case 2, 3, 4 발생 
@@ -301,7 +301,7 @@ int rbtree_erase(rbtree *t, node_t *p) {
   // TODO: implement erase
   node_t *x; // fix_up의 기준이 될 노드 ptr, successor의 값의 자리를 저장해두는 포인터 변수
   node_t *y = p; // 삭제될 노드
-  color_t y_color = y -> color; // 변경 전 y의 색 저장
+  color_t y_origin_color = y -> color; // 변경 전 y의 색 저장
 
   //case 1 : 왼쪽 노드가 nil일때
   if (p -> left == t -> nil) {
@@ -313,14 +313,14 @@ int rbtree_erase(rbtree *t, node_t *p) {
   } else { // case 3 : 양쪽 모두 노드가 있을 때
   // y는 직후 원소 = 오른쪽 서브트리의 최소 키
     y = rbtree_successor(t, p -> right);
-    y_color = y -> color;
+    y_origin_color = y -> color;
     x = y -> right; // x는 y의 오른쪽 자식을 가리킴
     if (y -> parent == p) { // min값을 구해서 찾았는데, 삭제할 y가 부모고 p가 y의 왼쪽 자식일때, 즉 case1과 동일한 상황임
       x -> parent = y; 
       // x는 successor의 자리를 저장해두는 애라 y를 따라다님(가리킴) 
       // x가 nil일 경우는 nil의 부모는 설정되지 않기 떄문에 따로 지정해줘야함
     } else { // y의 부모가 삭제할 노드가 아닐때
-      rbtree_transplant(t, p, y -> right); // y의 부모노드를 y의 오른쪽 자식과 연결
+      rbtree_transplant(t, y, y -> right); // y의 부모노드를 y의 오른쪽 자식과 연결
       y -> right = p -> right; // y의 오른쪽 자식은 삭제할 노드 p의 오른쪽 자식
       y -> right -> parent = y; // y의 오른쪽 자식의 부모는 y
     }
@@ -331,7 +331,7 @@ int rbtree_erase(rbtree *t, node_t *p) {
   }
   free(p); // 할당 해제
   p = NULL; // 해줘야 누수가 방지됨
-  if (y_color == RBTREE_BLACK) { // 이중 흑색 노드 발생
+  if (y_origin_color == RBTREE_BLACK) { // 이중 흑색 노드 발생
     rbtree_erase_fixup(t, x); //색 변경 함수 호출
   }
   return 0;
